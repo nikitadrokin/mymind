@@ -26,6 +26,9 @@ const summaryMaxLen = 500;
 const maxTagCount = 8;
 const maxTagLen = 32;
 
+/** OpenRouter free-models router (no paid models). */
+const OPENROUTER_FREE_MODEL = "openrouter/free";
+
 type CardContentForClassify = {
   cardId: string;
   title: string;
@@ -186,22 +189,46 @@ async function classifyWithOpenRouter(
 }> {
   const { systemPrompt, userContent } = toPrompt(input);
   const userParts = [...userContent];
+  const hasImage = userParts.some((part) => part.type === "image_url");
+
+  /** Gemma (and some free-router backends) reject system/developer role with vision; fold instructions into user text. */
+  const messages = hasImage
+    ? (() => {
+        const first = userParts[0];
+        if (first?.type !== "text") {
+          throw new Error("Classification payload must start with a text part.");
+        }
+        return [
+          {
+            role: "user" as const,
+            content: [
+              {
+                type: "text" as const,
+                text: `${systemPrompt}\n\n---\n\n${first.text}`,
+              },
+              ...userParts.slice(1),
+            ],
+          },
+        ];
+      })()
+    : [
+        {
+          role: "system" as const,
+          content: systemPrompt,
+        },
+        {
+          role: "user" as const,
+          content: userParts,
+        },
+      ];
 
   const payload = {
-    model: options.model ?? "openrouter/auto",
-    response_format: {
-      type: "json_object" as const,
-    },
-    messages: [
-      {
-        role: "system" as const,
-        content: systemPrompt,
-      },
-      {
-        role: "user" as const,
-        content: userParts,
-      },
-    ],
+    model: options.model ?? OPENROUTER_FREE_MODEL,
+    /** Gemma on Google AI Studio rejects `response_format` for vision; text-only path keeps strict JSON mode. */
+    ...(hasImage
+      ? {}
+      : { response_format: { type: "json_object" as const } }),
+    messages,
     temperature: 0.2,
   };
 
@@ -450,7 +477,6 @@ export const setCardAutoClassification = mutation({
 export const classifyCard = action({
   args: {
     id: v.id("mindCards"),
-    forceModel: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
@@ -497,7 +523,7 @@ export const classifyCard = action({
 
     const classifier = await classifyWithOpenRouter(cardPayload, {
       apiKey,
-      model: args.forceModel,
+      model: OPENROUTER_FREE_MODEL,
     });
 
     const themes = classifier.themes.length ? classifier.themes : ["note"];
@@ -513,7 +539,7 @@ export const classifyCard = action({
       autoSummary: classifier.summary,
       aiConfidence: classifier.confidence,
       autoCategoryState: "ready",
-      autoCategoryModel: args.forceModel ?? "openrouter/auto",
+      autoCategoryModel: OPENROUTER_FREE_MODEL,
       autoCategoryReason: undefined,
     });
 
