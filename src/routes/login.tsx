@@ -1,7 +1,7 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { authClient } from '@/lib/auth-client';
-import { Button } from '#/components/ui/button';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '#/components/ui/button'
 import {
 	Card,
 	CardContent,
@@ -9,56 +9,56 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from '#/components/ui/card';
-import { Input } from '#/components/ui/input';
-import { Label } from '#/components/ui/label';
+} from '#/components/ui/card'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 export const Route = createFileRoute('/login')({
 	beforeLoad: ({ context }) => {
-		if (context.isAuthenticated) {
-			throw redirect({ to: '/' });
+		if (context.isAuthenticated === true) {
+			throw redirect({ to: '/' })
 		}
 	},
 	component: LoginPage,
-});
+})
 
 function LoginPage() {
-	const navigate = useNavigate();
-	const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate()
+	const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+	const [name, setName] = useState('')
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [error, setError] = useState<string | null>(null)
+	const [loading, setLoading] = useState(false)
 
 	async function onSubmit(e: React.FormEvent) {
-		e.preventDefault();
-		setError(null);
-		setLoading(true);
+		e.preventDefault()
+		setError(null)
+		setLoading(true)
 		try {
 			if (mode === 'signup') {
 				const { error: err } = await authClient.signUp.email({
 					email,
 					password,
 					name: name.trim() || email.split('@')[0] || 'User',
-				});
+				})
 				if (err) {
-					setError(err.message ?? 'Could not create account');
-					return;
+					setError(err.message ?? 'Could not create account')
+					return
 				}
 			} else {
 				const { error: err } = await authClient.signIn.email({
 					email,
 					password,
-				});
+				})
 				if (err) {
-					setError(err.message ?? 'Could not sign in');
-					return;
+					setError(err.message ?? 'Could not sign in')
+					return
 				}
 			}
-			await navigate({ to: '/' });
+			await navigate({ to: '/' })
 		} finally {
-			setLoading(false);
+			setLoading(false)
 		}
 	}
 
@@ -82,8 +82,8 @@ function LoginPage() {
 								size="sm"
 								className="flex-1"
 								onClick={() => {
-									setMode('signin');
-									setError(null);
+									setMode('signin')
+									setError(null)
 								}}
 							>
 								Sign in
@@ -94,8 +94,8 @@ function LoginPage() {
 								size="sm"
 								className="flex-1"
 								onClick={() => {
-									setMode('signup');
-									setError(null);
+									setMode('signup')
+									setError(null)
 								}}
 							>
 								Sign up
@@ -110,7 +110,7 @@ function LoginPage() {
 									autoComplete="name"
 									value={name}
 									onChange={(ev) => {
-										setName(ev.target.value);
+										setName(ev.target.value)
 									}}
 									placeholder="Your name"
 								/>
@@ -126,7 +126,7 @@ function LoginPage() {
 								required
 								value={email}
 								onChange={(ev) => {
-									setEmail(ev.target.value);
+									setEmail(ev.target.value)
 								}}
 								placeholder="you@example.com"
 							/>
@@ -144,7 +144,7 @@ function LoginPage() {
 								minLength={8}
 								value={password}
 								onChange={(ev) => {
-									setPassword(ev.target.value);
+									setPassword(ev.target.value)
 								}}
 							/>
 						</div>
@@ -155,11 +155,7 @@ function LoginPage() {
 						) : null}
 					</CardContent>
 					<CardFooter>
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={loading}
-						>
+						<Button type="submit" className="w-full" disabled={loading}>
 							{loading
 								? 'Please wait…'
 								: mode === 'signin'
@@ -170,5 +166,5 @@ function LoginPage() {
 				</form>
 			</Card>
 		</main>
-	);
+	)
 }

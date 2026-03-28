@@ -1,15 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { handler } from '@/lib/auth-server';
+import { createFileRoute } from '@tanstack/react-router'
 
-function authHandler({ request }: { request: Request }) {
-	return handler(request);
+async function authHandler({ request }: { request: Request }) {
+  const { handler } = await import('@/lib/auth-server')
+  return handler(request)
 }
 
 export const Route = createFileRoute('/api/auth/$')({
-	server: {
-		handlers: {
-			GET: authHandler,
-			POST: authHandler,
-		},
-	},
-});
+  server: {
+    handlers: {
+      GET: authHandler,
+      POST: authHandler,
+    },
+  },
+})

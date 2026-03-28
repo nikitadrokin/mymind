@@ -1,8 +1,10 @@
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-import { trpcRouter } from '#/integrations/trpc/router'
 import { createFileRoute } from '@tanstack/react-router'
 
-function handler({ request }: { request: Request }) {
+async function handler({ request }: { request: Request }) {
+  const { fetchRequestHandler } = await import(
+    '@trpc/server/adapters/fetch',
+  )
+  const { trpcRouter } = await import('#/integrations/trpc/router')
   return fetchRequestHandler({
     req: request,
     router: trpcRouter,

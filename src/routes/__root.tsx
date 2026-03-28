@@ -10,7 +10,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { ConvexClientProvider } from "#/components/convex-client-provider";
 import type { TRPCRouter } from "#/integrations/trpc/router";
-import { getToken } from "@/lib/auth-server";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
@@ -29,6 +28,14 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	beforeLoad: async () => {
+		if (!import.meta.env.SSR) {
+			return {
+				token: undefined,
+				isAuthenticated: undefined,
+			}
+		}
+
+		const { getToken } = await import("@/lib/auth-server")
 		const token = await getToken();
 		return {
 			token,
