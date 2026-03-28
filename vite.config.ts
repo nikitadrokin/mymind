@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
+import { resolve as resolvePath } from 'node:path'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
@@ -18,22 +19,31 @@ const clientNodeShimsPlugin = {
 
 		return {
 			resolve: {
-				alias: {
-					'node:stream': new URL('./src/shims/node-stream.ts', import.meta.url)
-						.pathname,
-					'stream': new URL('./src/shims/node-stream.ts', import.meta.url)
-						.pathname,
-					'node:stream/web': new URL(
-						'./src/shims/node-stream-web.ts',
-						import.meta.url,
-					).pathname,
-					'stream/web': new URL('./src/shims/node-stream-web.ts', import.meta.url)
-						.pathname,
-					'node:async_hooks': new URL(
-						'./src/shims/node-async-hooks.ts',
-						import.meta.url,
-					).pathname,
-				},
+				alias: [
+					{
+						find: /^node:stream\/web$/,
+						replacement: resolvePath(process.cwd(), 'src/shims/node-stream-web.ts'),
+					},
+					{
+						find: /^stream\/web$/,
+						replacement: resolvePath(process.cwd(), 'src/shims/node-stream-web.ts'),
+					},
+					{
+						find: /^node:stream$/,
+						replacement: resolvePath(process.cwd(), 'src/shims/node-stream.ts'),
+					},
+					{
+						find: /^stream$/,
+						replacement: resolvePath(process.cwd(), 'src/shims/node-stream.ts'),
+					},
+					{
+						find: /^node:async_hooks$/,
+						replacement: resolvePath(
+							process.cwd(),
+							'src/shims/node-async-hooks.ts',
+						),
+					},
+				],
 			},
 		}
 	},
