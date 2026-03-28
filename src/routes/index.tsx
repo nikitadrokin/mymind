@@ -1,11 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import MindApp from '#/components/MindApp'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import MindApp from "#/components/mind-app";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
 	beforeLoad: ({ context }) => {
 		if (context.isAuthenticated === false) {
-			throw redirect({ to: '/login' })
+			throw redirect({ to: "/login" });
 		}
 	},
 	component: MindApp,
-})
+});
