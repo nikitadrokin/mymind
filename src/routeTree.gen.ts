@@ -10,14 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ImplementationReviewRouteImport } from './routes/implementation-review'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiMindMirrorRouteImport } from './routes/api.mind-mirror'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImplementationReviewRoute = ImplementationReviewRouteImport.update({
+  id: '/implementation-review',
+  path: '/implementation-review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -28,6 +35,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMindMirrorRoute = ApiMindMirrorRouteImport.update({
+  id: '/api/mind-mirror',
+  path: '/api/mind-mirror',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
@@ -44,14 +56,18 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/implementation-review': typeof ImplementationReviewRoute
   '/login': typeof LoginRoute
+  '/api/mind-mirror': typeof ApiMindMirrorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/implementation-review': typeof ImplementationReviewRoute
   '/login': typeof LoginRoute
+  '/api/mind-mirror': typeof ApiMindMirrorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -59,22 +75,48 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/implementation-review': typeof ImplementationReviewRoute
   '/login': typeof LoginRoute
+  '/api/mind-mirror': typeof ApiMindMirrorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login' | '/api/auth/$' | '/api/trpc/$'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/implementation-review'
+    | '/login'
+    | '/api/mind-mirror'
+    | '/api/auth/$'
+    | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login' | '/api/auth/$' | '/api/trpc/$'
-  id: '__root__' | '/' | '/about' | '/login' | '/api/auth/$' | '/api/trpc/$'
+  to:
+    | '/'
+    | '/about'
+    | '/implementation-review'
+    | '/login'
+    | '/api/mind-mirror'
+    | '/api/auth/$'
+    | '/api/trpc/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/implementation-review'
+    | '/login'
+    | '/api/mind-mirror'
+    | '/api/auth/$'
+    | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ImplementationReviewRoute: typeof ImplementationReviewRoute
   LoginRoute: typeof LoginRoute
+  ApiMindMirrorRoute: typeof ApiMindMirrorRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
@@ -86,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/implementation-review': {
+      id: '/implementation-review'
+      path: '/implementation-review'
+      fullPath: '/implementation-review'
+      preLoaderRoute: typeof ImplementationReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -100,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mind-mirror': {
+      id: '/api/mind-mirror'
+      path: '/api/mind-mirror'
+      fullPath: '/api/mind-mirror'
+      preLoaderRoute: typeof ApiMindMirrorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/trpc/$': {
@@ -122,7 +178,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ImplementationReviewRoute: ImplementationReviewRoute,
   LoginRoute: LoginRoute,
+  ApiMindMirrorRoute: ApiMindMirrorRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
