@@ -13,8 +13,6 @@ Token savings vs full context injection:
 """
 
 import re
-from typing import Optional
-
 
 # Tool definition passed to Claude API
 TOOL_READ_SECTION = {

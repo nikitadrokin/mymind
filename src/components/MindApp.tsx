@@ -757,13 +757,22 @@ function VoiceCard({
 	);
 }
 
+const DEFAULT_MIRROR_PROMPT =
+	'Given everything in my notes, what should I focus on this week?';
+
 export default function MindApp() {
 	const [search, setSearch] = useState('');
+	const [mirrorOpen, setMirrorOpen] = useState(false);
+	const [mirrorPrompt, setMirrorPrompt] = useState(DEFAULT_MIRROR_PROMPT);
+	const [mirrorLoading, setMirrorLoading] = useState(false);
+	const [mirrorReport, setMirrorReport] = useState('');
+	const [mirrorErr, setMirrorErr] = useState('');
 	const listArgs = search.trim() ? { search: search.trim() } : {};
 	const cards = useQuery(api.mindCards.listCards, listArgs);
 	const createCard = useMutation(api.mindCards.createCard);
 	const removeCard = useMutation(api.mindCards.deleteCard);
 	const classifyCard = useAction(api.mindCards.classifyCard);
+	const runMindMirror = useAction(api.mindMirror.runAnalysis);
 
 	const addCard = useCallback(
 		async (partial: NewCardPayload) => {
@@ -785,6 +794,22 @@ export default function MindApp() {
 		},
 		[removeCard],
 	);
+
+	async function submitMindMirror() {
+		const trimmed = mirrorPrompt.trim();
+		if (trimmed.length < 4 || mirrorLoading) return;
+		setMirrorLoading(true);
+		setMirrorErr('');
+		setMirrorReport('');
+		try {
+			const out = await runMindMirror({ request: trimmed });
+			setMirrorReport(out.report);
+		} catch (e) {
+			setMirrorErr(e instanceof Error ? e.message : 'Mind Mirror failed.');
+		} finally {
+			setMirrorLoading(false);
+		}
+	}
 
 	if (cards === undefined) {
 		return (
@@ -832,8 +857,45 @@ export default function MindApp() {
 						<button type="button" className={TAB_CLASS}>
 							Serendipity
 						</button>
+						<button
+							type="button"
+							className={`${TAB_CLASS} ${mirrorOpen ? 'bg-[#ebebeb] text-[#1a1a1a]' : ''}`}
+							onClick={() => setMirrorOpen((o) => !o)}
+						>
+							Mind Mirror
+						</button>
 					</nav>
 				</header>
+
+				{mirrorOpen ? (
+					<div className="border-b border-[#ebebeb] bg-[#fafaf8] px-8 py-5">
+						<p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#aaa]">
+							Ask over all your cards
+						</p>
+						<textarea
+							value={mirrorPrompt}
+							onChange={(e) => setMirrorPrompt(e.target.value)}
+							rows={3}
+							className="font-[var(--font-body)] mb-2 w-full max-w-2xl resize-y rounded-[12px] border border-[#e8e8e8] bg-white p-3 text-[13px] text-[#333] outline-none focus:border-[#ccc]"
+						/>
+						<button
+							type="button"
+							onClick={() => void submitMindMirror()}
+							disabled={mirrorPrompt.trim().length < 4 || mirrorLoading}
+							className="cursor-pointer rounded-lg border-none bg-[#1a1a1a] px-4 py-2 text-[12px] font-semibold text-white transition-opacity duration-150 hover:enabled:opacity-75 disabled:cursor-default disabled:opacity-40"
+						>
+							{mirrorLoading ? 'Running…' : 'Run'}
+						</button>
+						{mirrorErr ? (
+							<p className="mt-2 text-[12px] text-[#c2410c]">{mirrorErr}</p>
+						) : null}
+						{mirrorReport ? (
+							<pre className="font-[var(--font-body)] mt-4 max-h-[min(420px,50vh)] overflow-auto whitespace-pre-wrap break-words rounded-[12px] border border-[#e8e8e8] bg-white p-4 text-[12px] leading-relaxed text-[#333]">
+								{mirrorReport}
+							</pre>
+						) : null}
+					</div>
+				) : null}
 
 				<main className="flex-1 p-[28px_32px]">
 					<div className="columns-[260px] gap-4">

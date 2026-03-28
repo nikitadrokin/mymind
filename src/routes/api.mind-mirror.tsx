@@ -59,8 +59,10 @@ const MAX_FILE_SIZE_BYTES = 20000;
 const MAX_NOTES_BYTES = 150000;
 const PYTHON_BINARIES = ["python3", "python"];
 
+const ANSI_ESCAPE_PATTERN = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, "g");
+
 function stripAnsi(input: string): string {
-  return input.replace(/\x1b\[[0-9;]*m/g, "");
+  return input.replace(ANSI_ESCAPE_PATTERN, "");
 }
 
 function projectRootFromRoute(): string {
@@ -188,6 +190,20 @@ async function runMindMirror(notesPath: string, request: string): Promise<string
 }
 
 async function runHandler({ request }: { request: Request }) {
+  if (process.env.NODE_ENV === "production") {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error:
+          "Local subprocess Mind Mirror is disabled in production. Use the in-app Mind Mirror (Convex → your hosted Python service).",
+      }),
+      {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }
+
   const body = (await request.json().catch(() => ({}))) as MindMirrorRequestBody;
   const requestText = typeof body.request === "string" ? body.request.trim() : "";
   const overrideNotes = typeof body.notes === "string" ? body.notes.trim() : "";
