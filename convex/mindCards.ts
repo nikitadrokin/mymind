@@ -37,7 +37,7 @@ type CardContentForClassify = {
 };
 
 /** Chat message user content parts we send for classification. */
-type OpenAIUserContentPart =
+type UserContentPart =
   | { type: "text"; text: string }
   | { type: "image_url"; image_url: { url: string } };
 
@@ -124,7 +124,7 @@ function extractCardContent(
 
 function toPrompt(card: CardContentForClassify): {
   systemPrompt: string;
-  userContent: OpenAIUserContentPart[];
+  userContent: UserContentPart[];
 } {
   const systemPrompt = `You are an AI assistant for a note app.
 Your job is to automatically structure unstructured content from thoughts, journals, and memory captures.
@@ -140,7 +140,7 @@ Return STRICT JSON with this shape:
 }
 Confidence is from 0.0 to 1.0. Output only JSON.`;
 
-  const userParts: OpenAIUserContentPart[] = [
+  const userParts: UserContentPart[] = [
     {
       type: "text",
       text:
