@@ -25,6 +25,8 @@
   --accent-strong: #922c09;
   --accent-contrast: #fff8f3;
   --accent-muted: rgba(183, 69, 26, 0.12);
+  --button-bg: var(--accent);
+  --button-fg: var(--accent-contrast);
   --success: #2e6949;
   --warning: #a85b08;
   --danger: #9b3221;
@@ -51,6 +53,8 @@
   --accent-strong: #ffc19b;
   --accent-contrast: #23150e;
   --accent-muted: rgba(255, 141, 86, 0.15);
+  --button-bg: var(--accent);
+  --button-fg: var(--accent-contrast);
   --success: #7bd0a1;
   --warning: #ffb463;
   --danger: #ff9a86;
@@ -78,6 +82,8 @@
     --accent-strong: #ffc19b;
     --accent-contrast: #23150e;
     --accent-muted: rgba(255, 141, 86, 0.15);
+    --button-bg: var(--accent);
+    --button-fg: var(--accent-contrast);
     --success: #7bd0a1;
     --warning: #ffb463;
     --danger: #ff9a86;
@@ -274,11 +280,11 @@ a.app-chip:hover {
   gap: 0.6rem;
   border: 0;
   border-radius: 999px;
-  background: var(--ink);
-  color: #fff7f0;
+  background: var(--button-bg);
+  color: var(--button-fg);
   padding: 0 1.2rem;
   font-weight: 700;
-  box-shadow: 0 14px 30px rgba(32, 25, 18, 0.18);
+  box-shadow: 0 14px 30px color-mix(in oklab, var(--button-bg) 24%, transparent);
   transition:
     background-color 160ms ease,
     box-shadow 160ms ease,
@@ -288,7 +294,7 @@ a.app-chip:hover {
 
 .app-button:hover:enabled {
   transform: translateY(-1px);
-  background: color-mix(in oklab, var(--ink) 84%, black);
+  background: color-mix(in oklab, var(--button-bg) 82%, black);
 }
 
 .app-button:disabled {
