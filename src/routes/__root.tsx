@@ -32,10 +32,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			return {
 				token: undefined,
 				isAuthenticated: undefined,
-			}
+			};
 		}
 
-		const { getToken } = await import("@/lib/auth-server")
+		const { getToken } = await import("@/lib/auth-server");
 		const token = await getToken();
 		return {
 			token,
