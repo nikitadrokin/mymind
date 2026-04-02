@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "concurrently \"convex dev\" \"vite dev\"",
     "build": "vite build",
-    "serve": "vite preview",
-    "dev": "vite dev"
+    "serve": "vite preview"
   },
   "dependencies": {
     "@convex-dev/better-auth": "catalog:",
@@ -22,6 +22,7 @@
     "@tanstack/react-start": "^1.141.1",
     "@tanstack/router-plugin": "^1.141.1",
     "better-auth": "catalog:",
+    "concurrently": "^9.2.1",
     "convex": "catalog:",
     "dotenv": "catalog:",
     "lucide-react": "catalog:",
