@@ -78,7 +78,6 @@ function RootDocument() {
             <div className="grid h-svh grid-rows-[auto_1fr]">
               <Header />
               <Outlet />
-              <Outlet />
             </div>
             <Toaster richColors />
             <TanStackRouterDevtools position="bottom-left" />

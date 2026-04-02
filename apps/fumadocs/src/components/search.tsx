@@ -31,7 +31,12 @@ export default function DefaultSearchDialog(props: SharedProps) {
   });
 
   return (
-    <SearchDialog search={search} onSearchChange={setSearch} isLoading={query.isLoading} {...props}>
+    <SearchDialog
+      isLoading={query.isLoading}
+      onSearchChange={setSearch}
+      search={search}
+      {...props}
+    >
       <SearchDialogOverlay />
       <SearchDialogContent>
         <SearchDialogHeader>
@@ -39,7 +44,7 @@ export default function DefaultSearchDialog(props: SharedProps) {
           <SearchDialogInput />
           <SearchDialogClose />
         </SearchDialogHeader>
-        <SearchDialogList items={query.data !== "empty" ? query.data : null} />
+        <SearchDialogList items={query.data === "empty" ? null : query.data} />
       </SearchDialogContent>
     </SearchDialog>
   );

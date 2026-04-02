@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"convex dev\" \"vite dev\"",
+    "predev": "bun run --cwd ../../packages/backend convex dev --once",
+    "dev": "concurrently \"bun run --cwd ../../packages/backend convex dev\" \"vite dev\"",
     "build": "vite build",
     "serve": "vite preview"
   },
